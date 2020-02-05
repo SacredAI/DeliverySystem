@@ -1,6 +1,6 @@
-from flask import Flask
+import deliverysystem
 
-app = Flask(__name__)
+app = deliverysystem.app
 
 if __name__ == '__main__':
     app.run()

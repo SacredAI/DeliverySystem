@@ -1,1 +1,7 @@
+wtforms
+sqlalchemy
 flask
+passlib
+flask-SQLAlchemy
+flask-googlemaps
+apscheduler
