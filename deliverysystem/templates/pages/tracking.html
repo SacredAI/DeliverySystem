@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>{% block title %}Tracking{% endblock %}</title>
+{% endblock %}
+{% block body %}
+    {% block header %}{% endblock %}
+    {% block tab %}{% endblock %}
+    {% block content %}
+        <div class="trackingNumber-container">
+            <div class="trackingNumber-box">
+                <div class="login-form-container">
+                    {% if data %}
+                            {% for k, v in data.items() %}
+                                <div class="row">
+                                    <dt class="tracking-label">{{ k }}</dt>
+                                    <dd class="tracking-result">{{ v }}</dd>
+                                </div>
+                            {% endfor %}
+                        {% if map %}
+                            {{map.html}}
+                        {% endif %}
+                    {% endif %}
+                    <form name="tracking" method="post" action="{{ url_for('delivery.tracking') }}" class="tracking-form">
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="tnum">Tracking Number</label>
+                            </div>
+                            <div class="col-75">
+                                <input type="text" placeholder="Tracking Number..." name="tnum" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" value="Submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% if name == "Login/signup" %}
+            <div class="tracking-login-container">
+                <div class="tracking-login-info">
+                    <div class="tracking-login-text">
+                        <div class="row">
+                            <h1>Sign in to view packages and orders attached to your account.</h1>
+                        </div>
+                        <div class="row">
+                            <h4>Or Sign up to have easier access to your orders!</h4>
+                        </div>
+                    </div>
+                    <div class="tracking-login-link">
+                        <a href="{{ url_for('login') }}" class="uname">{{ name }}</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {% if orders %}
+                <div class="content-container">
+                    {% for order in orders %}
+                        <div class="row holder">
+                            <dt>{{ loop.index }}</dt>
+                            <dd>{{ order.trackingNumber }}</dd>
+                        </div>
+                        <div class="content">
+                            {% for k,v in order.items() %}
+                                <div class="row">
+                                    <dt>{{ k }}</dt>
+                                    <dd>{{ v }}</dd>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <script>
+                        let col = document.getElementsByClassName("holder");
+                        let i;
+                        for(i = 0; i < col.length; i++) {
+                            col[i].addEventListener('click', function () {
+                                this.classList.toggle("active");
+                                let content = this.nextElementSibling;
+                                if (content.style.display === "block") {
+                                    content.style.display = "none";
+                                } else {
+                                    content.style.display = "block";
+                                }
+                            });
+                        }
+                    </script>
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endblock %}
+    {% block info %}{% endblock %}
+{% endblock %}

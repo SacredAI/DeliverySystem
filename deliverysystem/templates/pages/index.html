@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>{% block title %}Home{% endblock %}</title>
+{% endblock %}
+{% block body %}
+    {% block header %}{% endblock %}
+    {% block tab %}{% endblock %}
+    {% block content %}<div class="homepage">Welcome to ADelivery - Enjoy your stay!</div>{% endblock %}
+    {% block info %}{% endblock %}
+{% endblock %}

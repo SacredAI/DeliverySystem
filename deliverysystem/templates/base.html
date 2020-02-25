@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - ADelivery</title>
+    <link rel="stylesheet" href="{{ url_for( 'static', filename='css/style.css' ) }}">
+    <link href='https://fonts.googleapis.com/css?family=Source Code Pro' rel='stylesheet'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+    url_for('static', filename='js/jquery/jquery.js') }}">\x3C/script>')</script>
+    <script>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    {% if not session['user'] %}
+        {% set name = "Login/signup" %}
+    {% else %}
+        {% set name = session['user'] %}
+    {% endif %}
+</head>
+<body>
+<div class="grid">
+    <div id="header"><a href="{{ url_for('index') }}" id="iconTitle"><i class="fas fa-truck" id="icon"></i>
+        <p id="PageTitle">ADelivery</p></a>
+        <script>
+            $(document).ready(($) => {
+                $('#icon').css({
+                    'margin-left': $('#PageTitle').outerHeight(),
+                });
+            });
+        </script>
+        {% block header %}{% endblock %}
+        <div id="userarea">
+            <div id="usericon"></div>
+            <div id="username">
+                <p>
+                    {% if name == "Login/signup" %}
+                        <a href="{{ url_for('login') }}" class="uname">{{ name }}</a>
+                    {% else %}
+                        <div class="u-drop-container">
+                            <button onclick="userDrop()" class="uname" id="user">{{ name }}</button>
+                            <div id="user-drop" class="user-dropdown">
+                                {% if session['admin'] %}
+                                    <a href="{{ url_for('admin.main') }}">Admin</a>
+                                {% endif %}
+                                <a href="#">Settings</a>
+                                <a href="{{ url_for('auth.logout') }}">Log-out</a>
+                            </div>
+                            <script>
+                                /* When the user clicks on the button,
+                                toggle between hiding and showing the dropdown content */
+                                function userDrop() {
+                                  document.getElementById("user-drop").classList.toggle("show");
+                                }
+
+                                // Close the dropdown if the user clicks outside of it
+                                window.onclick = function(event) {
+                                  if (!event.target.matches('#user')) {
+                                    let dropdowns = document.getElementsByClassName("user-dropdown");
+                                    let i;
+                                    for (i = 0; i < dropdowns.length; i++) {
+                                      let openDropdown = dropdowns[i];
+                                      if (openDropdown.classList.contains('show')) {
+                                        openDropdown.classList.remove('show');
+                                      }
+                                    }
+                                  }
+                                }
+                            </script>
+                        </div>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+    {# Header Here #}
+    <div id="links">
+        <a href="{{ url_for('tracking') }}">Tracking</a>
+        <a href="#">Pricing</a>
+        <a href="#">Support</a>
+        <a href="#">About Us</a>
+        <a href="javascript:void(0);" class="icon" onclick="ResponsiveLinks()">
+            <i class="fa fa-bars"></i>
+        </a>
+        <script>
+            function ResponsiveLinks() {
+                let x = document.getElementById("links");
+                if (x.className === "links") {
+                    x.className += " responsive";
+                } else {
+                    x.className = "links";
+                }
+            }
+        </script>
+        {% block tab %}{% endblock %}</div>
+    {# Section below the header for all the page links#}
+    <div id="content">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}</div>
+    <div id="info">
+        {% block info %}{% endblock %}
+        <div class="atsi-footer">
+            <div class="atsifooter atsifooter--corporate">
+                <div class="atsifooter__container">
+                    <img class="atsifooter__img" src="{{ url_for('static', filename='images/illu-atsi-icon.png') }}"
+                         alt="">
+                    <div class="atsifooter__msg">
+                        <div class="rte-wrapper">
+                            <p>ADelivery acknowledges the Traditional Custodians of the land on which we operate,
+                                live and gather as employees, and recognise their continuing connection to land, water
+                                and community. We pay respect to Elders past, present and emerging.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

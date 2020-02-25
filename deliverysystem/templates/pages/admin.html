@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>{% block title %}Admin Home{% endblock %}</title>
+{% endblock %}
+{% block body %}
+    {% block header %}{% endblock %}
+    {% block tab %}{% endblock %}
+    {% block content %}
+        <div class="admin-tab-container">
+            {% macro render_field(field) %}
+                <dt>{{ field.label }}
+                <dd>{{ field(**kwargs)|safe }}
+                    {% if field.errors %}
+                        <ul class=errors>
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </dd>
+            {% endmacro %}
+            <button class="tablink" id="defaultOpen" onclick="openPage('Order', this, '#FF3B3F')">Create New Order
+            </button>
+            <button class="tablink" onclick="openPage('Lists', this, '#FF3B3F')">Delivery Lists</button>
+            <button class="tablink" onclick="openPage('Employee', this, '#FF3B3F')">Employee Management</button>
+
+            <div id="Order" class="tabcontent">
+                <div class="Create_Order">
+                    <div class="login-form-container">
+                        {% if trackingNumber %}
+                            <div class="tracking-num">Tracking Number:{{ trackingNumber }}</div>
+                        {% endif %}
+                        <form name="order" id="createOrder" method="post" action="{{ url_for('admin.create') }}"
+                              class="login-form">
+                            <div class="row">
+                                {{ render_field(of.firstName) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.lastName) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.deliveryAddress) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.description) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.recipient) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.quadrant) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.dangerous) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.priority) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(of.weight) }}
+                            </div>
+                            <div class="row">
+                                <script>
+                                    function calculate_Price() {
+                                        let s = 0.5;
+                                        let m = 1.0;
+                                        let l = 2.0;
+
+                                        let form = document.forms["createOrder"];
+                                        let elmnt = form.elements["weight"];
+                                        let val = elmnt.value;
+                                        let p = document.getElementById("Price");
+                                        let nval = "Item is too heavy to Accept";
+
+                                        if (val > 0 && val <= 9.9) {
+                                            nval = val * s;
+                                            nval = "$" + nval.toFixed(1)
+                                        } else if (val >= 10.0 && val <= 24.9) {
+                                            nval = val * m;
+                                            nval = "$" + nval.toFixed(1)
+                                        } else if (val >= 25.0 && val <= 50.0) {
+                                            nval = val * l;
+                                            nval = "$" + nval.toFixed(1)
+                                        }
+                                        p.innerText = nval
+                                    }
+                                </script>
+                                <dt><label>Price</label></dt>
+                                <dd><label id="Price">$0.0</label></dd>
+                            </div>
+                            <div class="row">
+                                <input type="submit" value="Create Order">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="Modify_Order"></div>
+            </div>
+
+            <div id="Lists" class="tabcontent">
+                <div class="Create_List">
+                    <div class="login-form-container">
+                        <form name="CreateList" id="CreateList" method="post" action="{{ url_for('admin.createlist') }}"
+                              class="login-form">
+                            <div class="row">
+                                {{ render_field(lf.driverName) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(lf.quadrant) }}
+                            </div>
+                            <div class="row">
+                                <input type="submit" value="Create List">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="assignedLists">
+                        {% if lists %}
+                            <div class="content-container">
+                                {% for package in lists %}
+                                    <div class="row holder">
+                                        <dt>{{ loop.index }}</dt>
+                                        <dd>{{ package.trackingNumber }}</dd>
+                                    </div>
+                                    <div class="content">
+                                        {% for k,v in package.items() %}
+                                            <div class="row">
+                                                <dt>{{ k }}</dt>
+                                                <dd>{{ v }}</dd>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                                <script>
+                                    let col = document.getElementsByClassName("holder");
+                                    let i;
+                                    for (i = 0; i < col.length; i++) {
+                                        col[i].addEventListener('click', function () {
+                                            this.classList.toggle("active");
+                                            let content = this.nextElementSibling;
+                                            if (content.style.display === "block") {
+                                                content.style.display = "none";
+                                            } else {
+                                                content.style.display = "block";
+                                            }
+                                        });
+                                    }
+                                </script>
+                                <div class="row">
+                                    <form action="{{ url_for('admin.accept') }}">
+                                        <input type="submit" value="Complete">
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="Employee" class="tabcontent">
+                <div class="new_Employee">
+                    <div class="login-form-container">
+                        <form name="register" id="RegisterEmployee" method="post"
+                              action="{{ url_for('admin.register') }}" class="login-form">
+                            <div class="row">
+                                {{ render_field(ef.firstName) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.lastName) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.address) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.username) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.emergency_contact) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.TFN) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.position) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.password) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.email) }}
+                            </div>
+                            <div class="row">
+                                {{ render_field(ef.phonenumber) }}
+                            </div>
+                            <div class="row">
+                                <input type="submit" value="Register Employee">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function openPage(pageName, elmnt, color) {
+                    let i, tabcontent, tablinks;
+                    tabcontent = document.getElementsByClassName("tabcontent");
+                    for (i = 0; i < tabcontent.length; i++) {
+                        tabcontent[i].style.display = "none";
+                    }
+                    tablinks = document.getElementsByClassName("tablink");
+                    for (i = 0; i < tablinks.length; i++) {
+                        tablinks[i].style.backgroundColor = "";
+                        tablinks[i].style.color = "";
+                    }
+                    document.getElementById(pageName).style.display = "block";
+                    elmnt.style.backgroundColor = color;
+                    elmnt.style.color = "#FFFFFF";
+                }
+
+                // Get the element with id="defaultOpen" and click on it
+                document.getElementById("defaultOpen").click();
+            </script>
+        </div>
+        <script>
+            $(document).ready(function () {
+                let form = document.forms["createOrder"];
+                let elmnt = form.elements["weight"];
+
+                elmnt.addEventListener("keyup", (event) => {
+                    calculate_Price()
+                });
+            });
+        </script>
+    {% endblock %}
+    {% block info %}{% endblock %}
+{% endblock %}

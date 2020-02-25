@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if register == true %} Register {% else %} Login {% endif %} - ADelivery</title>
+    <link rel="stylesheet" href="{{ url_for( 'static', filename='css/style.css' ) }}">
+    <link href='https://fonts.googleapis.com/css?family=Source Code Pro' rel='stylesheet'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+    url_for('static', filename='js/jquery/jquery.js') }}">\x3C/script>')</script>
+    <script>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        {% if register == true %}
+            <div class="overlay-content">
+                {% macro render_field(field) %}
+                    <dt>{{ field.label }}
+                    <dd>{{ field(**kwargs)|safe }}
+                        {% if field.errors %}
+                            <ul class=errors>
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </dd>
+                {% endmacro %}
+                <div class="login-form-container">
+                    <form name="login" method="post" action="{{ url_for('auth.register_route') }}" class="login-form">
+                        <div class="row">
+                                {{ render_field(form.firstName) }}
+                        </div>
+                        <div class="row">
+                                {{ render_field(form.lastName) }}
+                        </div>
+                        <div class="row">
+                                {{ render_field(form.username) }}
+                        </div>
+                        <div class="row">
+                                {{ render_field(form.email) }}
+                        </div>
+                        <div class="row">
+                                {{ render_field(form.phonenumber) }}
+                        </div>
+                        <div class="row">
+                                {{ render_field(form.password) }}
+                        </div>
+                        <div class="row">
+                                {{ render_field(form.confirm) }}
+                        </div>
+                        <div class="row2">
+                            {{ render_field(form.accept_tos) }}
+                        </div>
+                        <div class="row">
+                            <input type="submit" value="Sign Up">
+                            <a class="register-link" href="{{ url_for('login') }}">or Login?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="overlay-content">
+            {% if Failed == True %}
+                <h1 style="color: red; font-size: calc(1vw + 15px);"> Incorrect Username or Password</h1>
+            {% endif %}
+                <div class="login-form-container">
+                    <form name="login" method="post" action="{{ url_for('auth.login_route') }}" class="login-form">
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="user">Username</label>
+                            </div>
+                            <div class="col-75">
+                                <input type="text" placeholder="Enter Username" name="user" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="passw">Password</label>
+                            </div>
+                            <div class="col-75">
+                                <input type="password" placeholder="Enter Password" name="passw" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" value="Login">
+                            <a class="register-link" href="{{ url_for('register') }}">or Register?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    <script>
+        //TODO: Get and Set Height of the Div To the Whole Page
+    </script>
+    </div>
+</body>
+</html>
